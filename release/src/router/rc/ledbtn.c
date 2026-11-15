@@ -152,7 +152,16 @@ static void ledbtn(int sig)
 		LED_status_changed = 1;
 	}
 	else if (LED_status != LED_status_old)
-		LED_status_changed = 1;
+	{
+		/* The first sample after start (LED_status_old == -1) is not a
+		 * button event. With AllLED on, calling setAllLedNormal() here
+		 * resets a ledg_scheme of OFF back to its default on every boot.
+		 */
+		if (LED_status_old == -1 && LED_status)
+			LED_status_changed = 0;
+		else
+			LED_status_changed = 1;
+	}
 	else
 		LED_status_changed = 0;
 
